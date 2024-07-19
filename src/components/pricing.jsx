@@ -1,10 +1,10 @@
 const Pricing = () => {
   return (
     <div>
-      <div className=" px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
-        <div className="max-w-xl mx-auto space-y-3 px-4 sm:text-center sm:px-0">
-          <h3 className="text-cyan-400 font-semibold text-center">Pricing</h3>
-          <p className="text-white text-3xl font-semibold sm:text-4xl">
+      <div className = " px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+      <div className = "max-w-xl mx-auto space-y-3 px-4 sm:text-center sm:px-0">
+      <h3  className = "text-cyan-400 font-semibold text-center">Pricing</h3>
+      <p   className = "text-white text-3xl font-semibold sm:text-4xl">
             Pay as you grow
           </p>
           <div className="max-w-xl mb-20 ">
