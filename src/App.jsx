@@ -3,17 +3,18 @@ import Navbar from "./components/Navbar";
 import Homepage from "./components/homepage";
 import { Route, Routes } from "react-router-dom";
 import About from "./components/about";
-import Pricing from "./components/pricing";
+
+import Contact from "./components/contact";
 
 export default function App() {
   return (
     <div>
       <Navbar />
       <Routes>
-        <Route path = "/" element        = {<Homepage />} />
-        <Route path = "/about" element   = {<About />} />
-        <Route path = "/pricing" element = {<Pricing />} />
-     </Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
       <Footer />
     </div>
   );
