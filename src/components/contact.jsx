@@ -1,4 +1,37 @@
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
 export default function Contact() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName]   = useState("");
+  const [email, setEmail]         = useState("");
+  const [phone, setPhone]         = useState("");
+  const [message, setMessage]     = useState("");
+
+  const handleMessage = async (e) => {
+    e.preventDefault();
+    try {
+      await axios
+        .post(
+          "http://localhost:4000/api/v1/message/send",
+          { firstName, lastName, email, phone, message },
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+        .then((res) => {
+          toast.success(res.data.message);
+          setFirstName("");
+          setLastName("");
+          setEmail("");
+          setPhone("");
+          setMessage("");
+        });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   return (
     <section className="bg-white dark:bg-gray-900">
       <div className="container px-6 py-12 mx-auto">
@@ -143,18 +176,22 @@ export default function Contact() {
             </p>
           </div>
         </div>
+
+        {/* -----------------form----------------- */}
         <div className="p-10 flex flex-col lg:flex-row gap-10">
         <div className = "flex-1 p-4 py-6 rounded-lg bg-gray-50 dark:bg-gray-800 md:p-2 lg:w-[50%] sm:w-[100%]">
-            <form>
+            <form onSubmit={handleMessage}>
               <div   className = "-mx-2 md:items-center md:flex">
               <div   className = "flex-1 px-2">
               <label className = "block mb-2 text-sm text-gray-600 dark:text-gray-200">
                     First Name
                   </label>
                   <input
-                    type        = "text"
-                    placeholder = "John "
-                    className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+              type        = "text"
+              placeholder = "First Name"
+              value       = {firstName}
+              onChange    = {(e) => setFirstName(e.target.value)}
+              className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
                 </div>
 
@@ -163,9 +200,11 @@ export default function Contact() {
                     Last Name
                   </label>
                   <input
-                    type        = "text"
-                    placeholder = "Doe"
-                    className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+              type        = "text"
+              placeholder = "Last Name"
+              value       = {lastName}
+              onChange    = {(e) => setLastName(e.target.value)}
+              className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
                 </div>
               </div>
@@ -176,8 +215,22 @@ export default function Contact() {
                 </label>
                 <input
                   type        = "email"
-                  placeholder = "johndoe@example.com"
+                  placeholder="johndoe@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                />
+              </div>
+              <div   className = "mt-4">
+              <label className = "block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                Phone
+                </label>
+                <input
+              type        = "number"
+              value       = {phone}
+              onChange    = {(e) => setPhone(e.target.value)}
+              placeholder = "1234567899"
+              className   = "block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                 />
               </div>
 
@@ -186,12 +239,15 @@ export default function Contact() {
                   Message
                 </label>
                 <textarea
-                  className   = "block w-full h-32 px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg md:h-56 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                  placeholder = "Message"
+            className   = "block w-full h-32 px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg md:h-56 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+            rows        = {7}
+            placeholder = "Message"
+            value       = {message}
+            onChange    = {(e) => setMessage(e.target.value)}
                 ></textarea>
               </div>
 
-              <button className = "w-full px-6 py-3 mt-4 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+              <button type="submit" className = "w-full px-6 py-3 mt-4 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                 Send message
               </button>
             </form>

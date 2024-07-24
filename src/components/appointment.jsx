@@ -1,6 +1,82 @@
-import React from "react";
+import axios from "axios";
+import { useEffect } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const Appointment = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [department, setDepartment] = useState("Pediatrics");
+  const [doctorFirstName, setDoctorFirstName] = useState("");
+  const [doctorLastName, setDoctorLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [hasVisited, setHasVisited] = useState(false);
+
+  const departmentsArray = [
+    "Pediatrics",
+    "Orthopedics",
+    "Cardiology",
+    "Neurology",
+    "Oncology",
+    "Radiology",
+    "Physical Therapy",
+    "Dermatology",
+    "ENT",
+  ];
+
+  const [doctors, setDoctors] = useState([]);
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/v1/user/doctors",
+        { withCredentials: true }
+      );
+      setDoctors(data.doctors);
+      console.log(data.doctors);
+    };
+    fetchDoctors();
+  }, []);
+  const handleAppointment = async (e) => {
+    e.preventDefault();
+    try {
+      const hasVisitedBool = Boolean(hasVisited);
+      const { data } = await axios.post(
+        "http://localhost:4000/api/v1/appointment/post",
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+          appointment_date: appointmentDate,
+          department,
+          doctor_firstName: doctorFirstName,
+          doctor_lastName: doctorLastName,
+          hasVisited: hasVisitedBool,
+          address,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      toast.success(data.message);
+      setFirstName(""),
+        setLastName(""),
+        setEmail(""),
+        setPhone(""),
+        setAppointmentDate(""),
+        setDepartment(""),
+        setDoctorFirstName(""),
+        setDoctorLastName(""),
+        setHasVisited(""),
+        setAddress("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   return (
     <div>
       <section className="text-gray-600 body-font">
@@ -145,11 +221,22 @@ const Appointment = () => {
             </div>
             {/*----------------------------------- form---------------------------- */}
             <div className="mt-12 mx-auto px-4 p-8 bg-[#eee] lg:w-[40%] sm:w-[100%] sm:px-8 sm:rounded-xl">
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+              <form onSubmit={handleAppointment} className="space-y-5">
                 <div>
                   <label className="font-medium">Full name</label>
                   <input
                     type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    className="w-full mt-2 px-3 py-2 bg-white text-gray-500  outline-none border focus:border-gray-800 shadow-sm rounded-lg"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
                     className="w-full mt-2 px-3 py-2 bg-white text-gray-500  outline-none border focus:border-gray-800 shadow-sm rounded-lg"
                   />
@@ -158,7 +245,9 @@ const Appointment = () => {
                   <label className="font-medium">Email</label>
                   <input
                     type="email"
-                    placeholder="example@email.com"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full mt-2 px-3 py-2 text-gray-500  bg-white outline-none border focus:border-gray-800 shadow-sm rounded-lg"
                   />
@@ -173,6 +262,8 @@ const Appointment = () => {
                     </div>
                     <input
                       type="number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       placeholder="1234567899"
                       required
                       className="w-full pl-[4.5rem] pr-3 py-2 appearance-none  bg-white outline-none border focus:border-gray-800 shadow-sm rounded-lg"
@@ -183,37 +274,101 @@ const Appointment = () => {
                   <label className="font-medium">Service</label>
                   <div className="relative flex flex-row flex-wrap gap-5 justify-start mt-2">
                     <div className=" inset-y-0  my-auto h-10 flex items-center border-r ">
-                      <select className="text-sm px-3 bg-white outline-none rounded-lg w-[250px] h-full ">
-                        <option>Departments</option>{" "}
-                        <option>Departments</option>{" "}
-                        <option>Departments</option>{" "}
-                        <option>Departments</option>
+                      <select
+                        className="text-sm px-3 bg-white outline-none rounded-lg w-[250px] h-full "
+                        value={department}
+                        onChange={(e) => {
+                          setDepartment(e.target.value);
+                          setDoctorFirstName("");
+                          setDoctorLastName("");
+                        }}
+                      >
+                        {departmentsArray.map((depart, index) => {
+                          return (
+                            <option value={depart} key={index}>
+                              {depart}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                     <div className=" inset-y-0  my-auto h-10 flex items-center border-r  ">
-                      <select className="text-sm px-3 bg-white outline-none rounded-lg w-[250px] h-full">
-                        <option className="text-white">Doctor</option>
+                      <select
+                        value={`${doctorFirstName} ${doctorLastName}`}
+                        onChange={(e) => {
+                          const [firstName, lastName] =
+                            e.target.value.split(" ");
+                          setDoctorFirstName(firstName);
+                          setDoctorLastName(lastName);
+                        }}
+                        disabled={!department}
+                        className="text-sm px-3 bg-white outline-none rounded-lg w-[250px] h-full"
+                      >
+                        <option value="">Select Doctor</option>
+                        {doctors
+                          .filter(
+                            (doctor) => doctor.doctorDepartment === department
+                          )
+                          .map((doctor, index) => (
+                            <option
+                              value={`${doctor.firstName} ${doctor.lastName}`}
+                              key={index}
+                            >
+                              {doctor.firstName} {doctor.lastName}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </div>
-                 
+
                   <div className="w-[250px]">
                     <label className="font-medium">Date</label>
                     <input
                       type="date"
+                      placeholder="Appointment Date"
+                      value={appointmentDate}
+                      onChange={(e) => setAppointmentDate(e.target.value)}
                       required
                       className="w-full mt-2 px-3 py-2 bg-white outline-none border focus:border-gray-800 shadow-sm rounded-lg"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="font-medium">Message</label>
+                  <label className="font-medium">Address</label>
                   <textarea
+                    rows="10"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Address"
                     required
                     className="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none  bg-white outline-none border focus:border-gray-800 shadow-sm rounded-lg"
                   ></textarea>
+                  <label
+                    htmlFor="Option2"
+                    className="flex cursor-pointer items-start gap-4"
+                  >
+                    <div className="flex items-center">
+                      &#8203;
+                      <input
+                        type="checkbox"
+                        className="size-4 rounded border-gray-300"
+                        checked={hasVisited}
+                        onChange={(e) => setHasVisited(e.target.checked)}
+                      />
+                    </div>
+
+                    <div>
+                      <strong className="font-medium text-gray-900">
+                        {" "}
+                        Have you visited before ?{" "}
+                      </strong>
+                    </div>
+                  </label>
                 </div>
-                <button className="w-full px-4 py-2 text-white font-medium bg-gray-800 hover:bg-gray-700 active:bg-gray-900 rounded-lg duration-150">
+                <button
+                  type="submit"
+                  className="w-full px-4 py-2 text-white font-medium bg-gray-800 hover:bg-gray-700 active:bg-gray-900 rounded-lg duration-150"
+                >
                   Submit
                 </button>
               </form>
