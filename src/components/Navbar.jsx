@@ -1,110 +1,120 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.svg";
 
 export default function Navbar() {
-  return (
-    <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-white text-sm py-4 sm:py-0 dark:bg-neutral-800">
-      <nav
-        className="max-w-[85rem] w-full mx-auto px-4 md:px-6 lg:px-8"
-        aria-label="Global"
-      >
-        <div className="relative sm:flex sm:items-center">
-          <div className="flex items-center justify-between">
-            <NavLink
-              to="/"
-              className="flex-none p-5 text-xl font-semibold dark:text-white"
-            >
-              <img src={logo} alt="" />
-            </NavLink>
-            <div className="sm:hidden">
-              <button
-                type="button"
-                className="hs-collapse-toggle p-2 inline-flex justify-center items-center gap-x-2 rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-white/10"
-                data-hs-collapse="#navbar-slide-up-animation"
-                aria-controls="navbar-slide-up-animation"
-                aria-label="Toggle navigation"
-              >
-                <svg
-                  className="hs-collapse-open:hidden flex-shrink-0 size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="3" x2="21" y1="6" y2="6" />
-                  <line x1="3" x2="21" y1="12" y2="12" />
-                  <line x1="3" x2="21" y1="18" y2="18" />
-                </svg>
-                <svg
-                  className="hs-collapse-open:block hidden flex-shrink-0 size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
+  const [state, setState] = useState(false);
 
-          <div
-            id="navbar-slide-up-animation"
-            className="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow sm:block"
-          >
-            <div className="text-lg flex flex-col gap-3 sm:gap-y-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5">
-              <NavLink
-                exact
-                to="/"
-                className="font-medium  text-blue-500"
-                aria-current="page"
-              >
-                Home
-              </NavLink>
-              <NavLink
-                exact
-                to="/about"
-                className="font-medium text-gray-600 hover:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500"
-              >
-                About
-              </NavLink>
-              <NavLink
-                exact
-                to="/contact"
-                className="font-medium text-gray-600 hover:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500"
-              >
-                Contact Us
-              </NavLink>
-             
-              <NavLink
-                exact
-                to="/about"
-                className="font-medium text-gray-600 hover:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500"
-              >
-                About
-              </NavLink>
-              <NavLink
-                exact
-                to="/pricing"
-                className="font-medium text-gray-600 hover:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500"
-              >
-                Pricing
-              </NavLink>
-            </div>
+  // Replace javascript:void(0) paths with your paths
+  const navigation = [
+    { title: "Home", path: "/" },
+    { title: "About", path: "/about" },
+    { title: "Departments", path: "/departments" },
+    { title: "Contact", path: "/contact" },
+    { title: "Get Appointment →", path: "/appointment" },
+  ];
+
+  useEffect(() => {
+    document.onclick = (e) => {
+      const target = e.target;
+      if (!target.closest(".menu-btn")) setState(false);
+    };
+  }, []);
+
+  return (
+    <nav
+      className={`bg-white pb-5 md:text-sm ${
+        state
+          ? "shadow-lg rounded-xl border mx-2 mt-2 md:shadow-none md:border-none md:mx-2 md:mt-0"
+          : ""
+      }`}
+    >
+      <div className="gap-x-14 items-center max-w-screen-xl mx-auto px-4 md:flex md:px-8">
+        <div className="flex items-center justify-between py-5 md:block">
+          <NavLink exact to="/">
+            <img src={logo} width={120} height={50} alt="Float UI logo" />
+          </NavLink>
+          <div className="md:hidden">
+            <button
+              className="menu-btn text-gray-500 hover:text-gray-800"
+              onClick={() => setState(!state)}
+            >
+              {state ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap  = "round"
+                    strokeLinejoin = "round"
+                    d              = "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
-      </nav>
-    </header>
+        <div
+          className={`flex-1 items-center mt-8 md:mt-0 md:flex ${
+            state ? "block" : "hidden"
+          } `}
+        >
+          <ul className="justify-center items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
+            {navigation.map((item, idx) => {
+              return (
+                <li key={idx} className="text-gray-700 hover:text-gray-900">
+                  <NavLink exact to={item.path} className="block">
+                    {item.title}
+                  </NavLink>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="flex-1 gap-x-6 items-center justify-end mt-6 space-y-6 md:flex md:space-y-0 md:mt-0">
+            <a
+              href="javascript:void(0)"
+              className="block text-gray-700 hover:text-gray-900"
+            >
+              Log in
+            </a>
+            <a
+              href="javascript:void(0)"
+              className="flex items-center justify-center gap-x-1 py-2 px-4 text-white font-medium bg-gray-800 hover:bg-gray-700 active:bg-gray-900 rounded-full md:inline-flex"
+            >
+              Sign in
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 }
